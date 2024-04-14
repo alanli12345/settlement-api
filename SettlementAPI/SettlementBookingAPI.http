@@ -1,0 +1,18 @@
+@SettlementBookingAPI_HostAddress = http://localhost:5153
+
+### GET Booking
+GET {{SettlementBookingAPI_HostAddress}}/bookings
+Accept: application/json
+
+###
+
+### POST Booking
+POST {{SettlementBookingAPI_HostAddress}}/bookings
+Content-Type: application/json
+
+{
+  "name": "John Smith",
+  "bookingTime": "2024-04-13T10:00:00" // Adjust the bookingTime as needed
+}
+
+###
