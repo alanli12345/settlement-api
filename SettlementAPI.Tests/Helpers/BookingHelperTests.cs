@@ -1,6 +1,4 @@
-﻿using System;
-using SettlementBookingAPI.Helpers;
-using Xunit;
+﻿using SettlementBookingAPI.Helpers;
 
 namespace SettlementBookingAPI.Tests.Helpers
 {

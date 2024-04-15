@@ -1,15 +1,15 @@
-﻿using static SettlementBookingAPI.Constants.BookingConstants;
-using static SettlementBookingAPI.Tests.Constants.TestConstants;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SettlementBookingAPI.Controllers;
 using SettlementBookingAPI.Helpers;
 using SettlementBookingAPI.Models.Requests;
 using SettlementBookingAPI.Models.Responses;
-using SettlementBookingAPI.Services;
 using SettlementBookingAPI.Repositories;
+using SettlementBookingAPI.Services;
 using SettlementBookingAPI.Strategies;
+using static SettlementBookingAPI.Constants.BookingConstants;
+using static SettlementBookingAPI.Tests.Constants.TestConstants;
 
 namespace SettlementBookingAPI.Tests
 {

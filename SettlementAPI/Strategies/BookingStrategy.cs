@@ -18,7 +18,7 @@ namespace SettlementBookingAPI.Strategies
 
             if (bookingsAtTime.Count() >= 4)
             {
-                return false; 
+                return false;
             }
 
             var userBookings = await _bookingRepositoryProxy.GetBookingsByNameAsync(name);
@@ -27,7 +27,7 @@ namespace SettlementBookingAPI.Strategies
             {
                 if (bookingTime >= booking.BookingTime && bookingTime < booking.BookingTime.AddHours(1))
                 {
-                    return false; 
+                    return false;
                 }
             }
 

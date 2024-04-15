@@ -14,6 +14,7 @@ namespace SettlementBookingAPI.Controllers
 
         private const string GetBookingsErrorMessage = "Failed to fetch bookings, reason: ";
         private const string BookAppointmentErrorMessage = "Failed to book appointment, reason: ";
+
         public BookingController(ILogger<BookingController> logger, IBookingService bookingService)
         {
             _logger = logger;
@@ -25,7 +26,7 @@ namespace SettlementBookingAPI.Controllers
         {
             if (string.IsNullOrEmpty(name))
             {
-                _logger.LogError(GetBookingsErrorMessage + EmptyNameMessage); 
+                _logger.LogError(GetBookingsErrorMessage + EmptyNameMessage);
                 return BadRequest(EmptyNameMessage);
             }
 
@@ -59,7 +60,7 @@ namespace SettlementBookingAPI.Controllers
             }
             else if (result.IsConflict)
             {
-                _logger.LogError(BookAppointmentErrorMessage + result.Message); 
+                _logger.LogError(BookAppointmentErrorMessage + result.Message);
                 return Conflict(result.Message);
             }
             else

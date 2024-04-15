@@ -3,6 +3,7 @@ using SettlementBookingAPI.Models.Requests;
 using SettlementBookingAPI.Repositories.Interfaces;
 using SettlementBookingAPI.Strategies;
 using SettlementBookingAPI.Strategies.Interfaces;
+using static SettlementBookingAPI.Tests.Constants.TestConstants;
 
 namespace SettlementBookingAPI.Tests.Strategies
 {
@@ -25,7 +26,7 @@ namespace SettlementBookingAPI.Tests.Strategies
             _bookingRepositoryProxyMock.Setup(x => x.GetBookingsAtTimeAsync(bookingTime)).ReturnsAsync(GetMockBookingsAtTime(4));
 
             // Act
-            var result = await _bookingStrategy.CanBookAsync("John", bookingTime);
+            var result = await _bookingStrategy.CanBookAsync(TestName, bookingTime);
 
             // Assert
             Assert.False(result);
@@ -37,10 +38,10 @@ namespace SettlementBookingAPI.Tests.Strategies
             // Arrange
             var bookingTime = DateTime.UtcNow;
             _bookingRepositoryProxyMock.Setup(x => x.GetBookingsAtTimeAsync(bookingTime)).ReturnsAsync(GetMockBookingsAtTime(3));
-            _bookingRepositoryProxyMock.Setup(x => x.GetBookingsByNameAsync("John")).ReturnsAsync(GetMockUserBookings(bookingTime));
+            _bookingRepositoryProxyMock.Setup(x => x.GetBookingsByNameAsync(TestName)).ReturnsAsync(GetMockUserBookings(bookingTime));
 
             // Act
-            var result = await _bookingStrategy.CanBookAsync("John", bookingTime);
+            var result = await _bookingStrategy.CanBookAsync(TestName, bookingTime);
 
             // Assert
             Assert.False(result);
@@ -52,10 +53,10 @@ namespace SettlementBookingAPI.Tests.Strategies
             // Arrange
             var bookingTime = DateTime.UtcNow;
             _bookingRepositoryProxyMock.Setup(x => x.GetBookingsAtTimeAsync(bookingTime)).ReturnsAsync(GetMockBookingsAtTime(3));
-            _bookingRepositoryProxyMock.Setup(x => x.GetBookingsByNameAsync("John")).ReturnsAsync(new List<Booking>());
+            _bookingRepositoryProxyMock.Setup(x => x.GetBookingsByNameAsync(TestName)).ReturnsAsync(new List<Booking>());
 
             // Act
-            var result = await _bookingStrategy.CanBookAsync("John", bookingTime);
+            var result = await _bookingStrategy.CanBookAsync(TestName, bookingTime);
 
             // Assert
             Assert.True(result);

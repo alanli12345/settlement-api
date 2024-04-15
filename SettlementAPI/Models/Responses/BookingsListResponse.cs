@@ -8,7 +8,7 @@ namespace SettlementBookingAPI.Models.Responses
         public string Message { get; set; }
         public List<Booking> Bookings { get; set; }
 
-        public BookingsListResponse(bool success, string message,  List<Booking> bookings)
+        public BookingsListResponse(bool success, string message, List<Booking> bookings)
         {
             Success = success;
             Message = message;
