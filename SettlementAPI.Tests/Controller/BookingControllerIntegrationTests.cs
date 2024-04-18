@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SettlementBookingAPI.Controllers;
 using SettlementBookingAPI.Helpers;
+using SettlementBookingAPI.Models.Entities;
 using SettlementBookingAPI.Models.Requests;
 using SettlementBookingAPI.Models.Responses;
 using SettlementBookingAPI.Repositories;
@@ -16,31 +17,41 @@ namespace SettlementBookingAPI.Tests
     public class BookingControllerIntegrationTests
     {
         private readonly Mock<ILogger<BookingController>> _loggerMock;
+        private readonly Mock<ILogger<BookingRepositoryProxy>> _proxyLoggerMock;
+        private readonly IMapper _mapperMock;
         private readonly BookingController _bookingController;
         private readonly BookingService _bookingService;
         private readonly BookingHelper _bookingHelper;
         private readonly BookingRepository _bookingRepository;
         private readonly BookingRepositoryProxy _bookingRepositoryProxy;
         private readonly BookingStrategy _bookingStrategy;
-        private readonly List<Booking> _bookings;
+        private readonly List<BookingEntity> _bookings;
 
         private readonly DateTime bookingTime = DateTime.UtcNow.Date.AddHours(10);
 
         public BookingControllerIntegrationTests()
         {
             _loggerMock = new Mock<ILogger<BookingController>>();
+            _proxyLoggerMock = new Mock<ILogger<BookingRepositoryProxy>>();
             _bookingHelper = new BookingHelper();
-            _bookings = new List<Booking>()
+            _bookings = new List<BookingEntity>()
                 {
-                    new Booking { Name = "John", BookingTime = bookingTime },
-                    new Booking { Name = "Bob", BookingTime = bookingTime },
-                    new Booking { Name = "Jane", BookingTime = bookingTime },
-                    new Booking { Name = "Trevor", BookingTime = bookingTime }
+                    new BookingEntity { Name = "John", BookingTime = bookingTime },
+                    new BookingEntity { Name = "Bob", BookingTime = bookingTime },
+                    new BookingEntity { Name = "Jane", BookingTime = bookingTime },
+                    new BookingEntity { Name = "Trevor", BookingTime = bookingTime }
                 };
+
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile());
+            });
+            _mapperMock = mapperConfig.CreateMapper();
+
             _bookingRepository = new BookingRepository(_bookings);
-            _bookingRepositoryProxy = new BookingRepositoryProxy(_bookingRepository);
+            _bookingRepositoryProxy = new BookingRepositoryProxy(_bookingRepository, _proxyLoggerMock.Object);
             _bookingStrategy = new BookingStrategy(_bookingRepositoryProxy);
-            _bookingService = new BookingService(_bookingRepositoryProxy, _bookingStrategy, _bookingHelper);
+            _bookingService = new BookingService(_bookingRepositoryProxy, _bookingStrategy, _bookingHelper, _mapperMock);
             _bookingController = new BookingController(_loggerMock.Object, _bookingService);
         }
 

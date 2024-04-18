@@ -1,6 +1,4 @@
-﻿using SettlementBookingAPI.Models.Requests;
-
-namespace SettlementBookingAPI.Models.Responses
+﻿namespace SettlementBookingAPI.Models.Responses
 {
     public class BookingsListResponse
     {
@@ -14,5 +12,12 @@ namespace SettlementBookingAPI.Models.Responses
             Message = message;
             Bookings = bookings;
         }
+    }
+
+    public class Booking
+    {
+        public Guid BookingId { get; set; }
+        public DateTime BookingTime { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using SettlementBookingAPI.Models.Requests;
+﻿using SettlementBookingAPI.Models.Entities;
 using SettlementBookingAPI.Repositories;
 
 namespace SettlementBookingAPI.Tests.Repositories
@@ -6,17 +6,17 @@ namespace SettlementBookingAPI.Tests.Repositories
     public class BookingRepositoryTests
     {
         private readonly BookingRepository _bookingRepository;
-        private readonly List<Booking> _bookings;
+        private readonly List<BookingEntity> _bookings;
         private readonly DateTime testBookingTime = DateTime.UtcNow.Date.AddHours(10);
 
         public BookingRepositoryTests()
         {
-            _bookings = new List<Booking>
+            _bookings = new List<BookingEntity>
             {
-                new Booking { BookingId = Guid.NewGuid(), Name = "John", BookingTime = testBookingTime },
-                new Booking { BookingId = Guid.NewGuid(), Name = "James", BookingTime = testBookingTime },
-                new Booking { BookingId = Guid.NewGuid(), Name = "Bob", BookingTime = testBookingTime },
-                new Booking { BookingId = Guid.NewGuid(), Name = "Jane", BookingTime = testBookingTime }
+                new BookingEntity { BookingId = Guid.NewGuid(), Name = "John", BookingTime = testBookingTime },
+                new BookingEntity { BookingId = Guid.NewGuid(), Name = "James", BookingTime = testBookingTime },
+                new BookingEntity { BookingId = Guid.NewGuid(), Name = "Bob", BookingTime = testBookingTime },
+                new BookingEntity { BookingId = Guid.NewGuid(), Name = "Jane", BookingTime = testBookingTime }
             };
 
             _bookingRepository = new BookingRepository(_bookings);
@@ -84,7 +84,7 @@ namespace SettlementBookingAPI.Tests.Repositories
         public async Task AddBookingAsync_AddsBookingToRepository()
         {
             // Arrange
-            var bookingToAdd = new Booking { BookingId = Guid.NewGuid(), Name = "NewBooking", BookingTime = testBookingTime };
+            var bookingToAdd = new BookingEntity { BookingId = Guid.NewGuid(), Name = "NewBooking", BookingTime = testBookingTime };
 
             // Act
             await _bookingRepository.AddBookingAsync(bookingToAdd);

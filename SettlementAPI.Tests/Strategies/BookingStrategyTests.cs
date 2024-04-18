@@ -1,5 +1,5 @@
 ﻿using Moq;
-using SettlementBookingAPI.Models.Requests;
+using SettlementBookingAPI.Models.Entities;
 using SettlementBookingAPI.Repositories.Interfaces;
 using SettlementBookingAPI.Strategies;
 using SettlementBookingAPI.Strategies.Interfaces;
@@ -53,7 +53,7 @@ namespace SettlementBookingAPI.Tests.Strategies
             // Arrange
             var bookingTime = DateTime.UtcNow;
             _bookingRepositoryProxyMock.Setup(x => x.GetBookingsAtTimeAsync(bookingTime)).ReturnsAsync(GetMockBookingsAtTime(3));
-            _bookingRepositoryProxyMock.Setup(x => x.GetBookingsByNameAsync(TestName)).ReturnsAsync(new List<Booking>());
+            _bookingRepositoryProxyMock.Setup(x => x.GetBookingsByNameAsync(TestName)).ReturnsAsync(new List<BookingEntity>());
 
             // Act
             var result = await _bookingStrategy.CanBookAsync(TestName, bookingTime);
@@ -62,19 +62,19 @@ namespace SettlementBookingAPI.Tests.Strategies
             Assert.True(result);
         }
 
-        private IEnumerable<Booking> GetMockBookingsAtTime(int count)
+        private IEnumerable<BookingEntity> GetMockBookingsAtTime(int count)
         {
-            var bookings = new List<Booking>();
+            var bookings = new List<BookingEntity>();
             for (int i = 0; i < count; i++)
             {
-                bookings.Add(new Booking { BookingTime = DateTime.UtcNow });
+                bookings.Add(new BookingEntity { BookingTime = DateTime.UtcNow });
             }
             return bookings;
         }
 
-        private IEnumerable<Booking> GetMockUserBookings(DateTime bookingTime)
+        private IEnumerable<BookingEntity> GetMockUserBookings(DateTime bookingTime)
         {
-            return new List<Booking> { new Booking { BookingTime = bookingTime } };
+            return new List<BookingEntity> { new BookingEntity { BookingTime = bookingTime } };
         }
     }
 }

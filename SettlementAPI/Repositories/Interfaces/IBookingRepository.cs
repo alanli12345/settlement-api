@@ -1,11 +1,11 @@
-﻿using SettlementBookingAPI.Models.Requests;
+﻿using SettlementBookingAPI.Models.Entities;
 
 namespace SettlementBookingAPI.Repositories.Interfaces
 {
     public interface IBookingRepository
     {
-        Task<IEnumerable<Booking>> GetBookingsByNameAsync(string name);
-        Task<IEnumerable<Booking>> GetBookingsAtTimeAsync(DateTime bookingTime);
-        Task AddBookingAsync(Booking booking);
+        Task<IEnumerable<BookingEntity>> GetBookingsByNameAsync(string name);
+        Task<IEnumerable<BookingEntity>> GetBookingsAtTimeAsync(DateTime bookingTime);
+        Task AddBookingAsync(BookingEntity booking);
     }
 }
