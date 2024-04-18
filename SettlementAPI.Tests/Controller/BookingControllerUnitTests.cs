@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Moq;
-using SettlementBookingAPI.Controllers;
 using SettlementBookingAPI.Models.Requests;
 using SettlementBookingAPI.Services.Interfaces;
 
@@ -27,7 +26,7 @@ namespace SettlementBookingAPI.Tests
             var result = await _bookingController.GetBookingsByName(null);
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -37,7 +36,7 @@ namespace SettlementBookingAPI.Tests
             var result = await _bookingController.GetBookingsByName("");
 
             // Assert
-            Assert.IsType<BadRequestObjectResult>(result.Result);
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]

@@ -1,6 +1,6 @@
 using SettlementBookingAPI.Helpers;
 using SettlementBookingAPI.Helpers.Interfaces;
-using SettlementBookingAPI.Models.Requests;
+using SettlementBookingAPI.Models.Entities;
 using SettlementBookingAPI.Repositories;
 using SettlementBookingAPI.Repositories.Interfaces;
 using SettlementBookingAPI.Services;
@@ -18,12 +18,13 @@ namespace SettlementBookingAPI
 
             // Add services to the container.
             builder.Services.AddControllers();
-            builder.Services.AddSingleton<List<Booking>>();
+            builder.Services.AddSingleton<List<BookingEntity>>();
             builder.Services.AddScoped<IBookingRepository, BookingRepository>();
             builder.Services.AddScoped<IBookingRepositoryProxy, BookingRepositoryProxy>();
             builder.Services.AddScoped<IBookingHelper, BookingHelper>();
             builder.Services.AddScoped<IBookingStrategy, BookingStrategy>();
             builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddAutoMapper(typeof(Program));
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();

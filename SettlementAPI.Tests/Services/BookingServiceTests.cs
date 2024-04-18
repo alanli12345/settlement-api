@@ -1,7 +1,10 @@
-﻿using Moq;
+﻿using AutoMapper;
+using Moq;
 using SettlementBookingAPI.Constants;
 using SettlementBookingAPI.Helpers.Interfaces;
+using SettlementBookingAPI.Models.Entities;
 using SettlementBookingAPI.Models.Requests;
+using SettlementBookingAPI.Models.Responses;
 using SettlementBookingAPI.Repositories.Interfaces;
 using SettlementBookingAPI.Services;
 using SettlementBookingAPI.Services.Interfaces;
@@ -16,13 +19,38 @@ namespace SettlementBookingAPI.Tests.Services
         private readonly Mock<IBookingStrategy> _bookingStrategyMock;
         private readonly Mock<IBookingHelper> _bookingHelperMock;
         private readonly IBookingService _bookingService;
+        private readonly IMapper _mapperMock;
 
         public BookingServiceTests()
         {
             _bookingRepositoryProxyMock = new Mock<IBookingRepositoryProxy>();
             _bookingStrategyMock = new Mock<IBookingStrategy>();
             _bookingHelperMock = new Mock<IBookingHelper>();
-            _bookingService = new BookingService(_bookingRepositoryProxyMock.Object, _bookingStrategyMock.Object, _bookingHelperMock.Object);
+
+            var mapperConfig = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile(new MappingProfile());
+            });
+            _mapperMock = mapperConfig.CreateMapper();
+
+            _bookingService = new BookingService(_bookingRepositoryProxyMock.Object, _bookingStrategyMock.Object, _bookingHelperMock.Object, _mapperMock);
+        }
+
+        public class BookingComparer : IEqualityComparer<Booking>
+        {
+            public bool Equals(Booking x, Booking y)
+            {
+                return x.BookingId == y.BookingId &&
+                       x.BookingTime == y.BookingTime &&
+                       x.Name == y.Name;
+            }
+
+            public int GetHashCode(Booking obj)
+            {
+                return obj.BookingId.GetHashCode() ^
+                       obj.BookingTime.GetHashCode() ^
+                       obj.Name.GetHashCode();
+            }
         }
 
         [Fact]
@@ -99,7 +127,7 @@ namespace SettlementBookingAPI.Tests.Services
             _bookingHelperMock.Setup(x => x.ParseBookingTime(request.BookingTime)).Returns(bookingTime);
             _bookingHelperMock.Setup(x => x.IsValidBookingTime(bookingTime)).Returns(true);
             _bookingStrategyMock.Setup(x => x.CanBookAsync(request.Name, bookingTime)).ReturnsAsync(true);
-            _bookingRepositoryProxyMock.Setup(x => x.AddBookingAsync(It.IsAny<Booking>())).Returns(Task.CompletedTask);
+            _bookingRepositoryProxyMock.Setup(x => x.AddBookingAsync(It.IsAny<BookingEntity>())).Returns(Task.CompletedTask);
 
             // Act
             var result = await _bookingService.BookAppointmentAsync(request);
@@ -126,16 +154,17 @@ namespace SettlementBookingAPI.Tests.Services
         {
             // Arrange
             var name = TestName;
-            var bookings = new List<Booking> { new Booking { BookingId = Guid.NewGuid(), Name = name, BookingTime = DateTime.UtcNow } };
+            var bookings = new List<BookingEntity> { new BookingEntity { BookingId = Guid.NewGuid(), Name = name, BookingTime = DateTime.UtcNow } };
             _bookingRepositoryProxyMock.Setup(x => x.GetBookingsByNameAsync(name)).ReturnsAsync(bookings);
 
             // Act
             var result = await _bookingService.GetBookings(name);
+            var mappedBookings = bookings.Select(_mapperMock.Map<Booking>).ToList();
 
             // Assert
             Assert.True(result.Success);
             Assert.Equal(BookingConstants.RetrievedMessage, result.Message);
-            Assert.Equal(bookings, result.Bookings);
+            Assert.True(mappedBookings.SequenceEqual(result.Bookings, new BookingComparer()));
         }
     }
 }

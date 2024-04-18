@@ -1,10 +1,13 @@
-﻿using static SettlementBookingAPI.Constants.BookingConstants;
+﻿using AutoMapper;
 using SettlementBookingAPI.Helpers.Interfaces;
+using SettlementBookingAPI.Models.Entities;
 using SettlementBookingAPI.Models.Requests;
 using SettlementBookingAPI.Models.Responses;
 using SettlementBookingAPI.Repositories.Interfaces;
 using SettlementBookingAPI.Services.Interfaces;
 using SettlementBookingAPI.Strategies.Interfaces;
+using static SettlementBookingAPI.Constants.BookingConstants;
+using static SettlementBookingAPI.Models.Responses.BookingsListResponse;
 
 namespace SettlementBookingAPI.Services
 {
@@ -13,12 +16,14 @@ namespace SettlementBookingAPI.Services
         private readonly IBookingRepositoryProxy _bookingRepositoryProxy;
         private readonly IBookingStrategy _bookingStrategy;
         private readonly IBookingHelper _bookingHelper;
+        private readonly IMapper _mapper;
 
-        public BookingService(IBookingRepositoryProxy bookingRepositoryProxy, IBookingStrategy bookingStrategy, IBookingHelper bookingHelper)
+        public BookingService(IBookingRepositoryProxy bookingRepositoryProxy, IBookingStrategy bookingStrategy, IBookingHelper bookingHelper, IMapper mapper)
         {
             _bookingRepositoryProxy = bookingRepositoryProxy;
             _bookingStrategy = bookingStrategy;
             _bookingHelper = bookingHelper;
+            _mapper = mapper;
         }
 
         public async Task<BookingResponse> BookAppointmentAsync(BookingRequest request)
@@ -40,7 +45,7 @@ namespace SettlementBookingAPI.Services
                     return new BookingResponse(false, UnavailableMessage, Guid.Empty, true);
 
                 var bookingId = Guid.NewGuid();
-                var booking = new Booking { BookingId = bookingId, BookingTime = bookingDateTime.Value, Name = request.Name };
+                var booking = new BookingEntity { BookingId = bookingId, BookingTime = bookingDateTime.Value, Name = request.Name };
 
                 await _bookingRepositoryProxy.AddBookingAsync(booking);
                 return new BookingResponse(true, SuccessfulMessage, bookingId);
@@ -59,11 +64,12 @@ namespace SettlementBookingAPI.Services
                     return new BookingsListResponse(false, EmptyNameMessage, new List<Booking>());
 
                 var result = await _bookingRepositoryProxy.GetBookingsByNameAsync(name);
+                var bookings = _mapper.Map<IEnumerable<Booking>>(result);
 
                 if (!result.Any())
                     return new BookingsListResponse(false, "No bookings found for the specified name.", new List<Booking>());
 
-                return new BookingsListResponse(true, RetrievedMessage, result.ToList());
+                return new BookingsListResponse(true, RetrievedMessage, bookings.ToList());
             }
             catch (Exception ex)
             {

@@ -10,11 +10,4 @@ namespace SettlementBookingAPI.Models.Requests
         [Required(ErrorMessage = "Name is required.")]
         public string Name { get; set; }
     }
-
-    public class Booking
-    {
-        public Guid BookingId { get; set; }
-        public DateTime BookingTime { get; set; }
-        public string Name { get; set; }
-    }
 }
